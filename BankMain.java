@@ -3,10 +3,14 @@ package DaltonBank;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 public class BankMain {
 
@@ -14,8 +18,8 @@ public class BankMain {
 		Scanner in = new Scanner(System.in);
 		System.out.println("Welcome to Dalton Corp Savings and Loan");
 		System.out.println("Please create the user account(s)");
-		List accounts = new ArrayList<Account>();
-		List trnsList = new ArrayList<Transactions>();
+		List<Account> accounts = new ArrayList<Account>();
+		List<Transactions> trnsList = new ArrayList<Transactions>();
 		System.out.println("Enter an account # or -1 to stop entering accounts:");
 		int accountNum = in.nextInt(); 
 		if (accountNum != -1) {
@@ -69,32 +73,45 @@ public class BankMain {
 					
 		}
 
-		   Table Transaction = sort(Transaction, 4)
+		Collections.sort(trnsList, new Comparator<Transactions>() {
+	        @Override public int compare(Transactions p1, Transactions p2) {
+	            return p1.getTransDate().compareTo(p2.getTransDate()); // Ascending
+	        }
 
-		   balance = processTransactions(Transaction, Account)
+	    });
 
-		   FOR all distinct accounts in Transactions
-		   System.out.println "The balance for account" +  account + " is " + balance
-		   END FOR
+		   float balance = processTransactions(trnsList, accounts);
 
-		   sort(Table a, ColNum b)
-		    sort a based on b
+		   for(Transactions t: trnsList)
+		    System.out.println("The balance for account" +  t.getAccountNum() + " is " + balance);
+		  
 
-		   balance (Table a, Table b)
-		    type = a.transactionType
-		    account = a.account
-		    balance = b.balance where b.account = account
-		    IF type = check
-		     b.balance = balance + a.ammount
-		    ELSE IF type =  Debit Card
-		     temp = balance - a.amount
-		     IF temp >= 0
-		      b.balance = temp
-		     ELSE
-		      b.balnce = temp - 35
-		     
-		     END balance
+		   
 
+
+	}
+
+	private static float processTransactions(List<Transactions> trnsList, List<Account> accounts) {
+		for (Transactions trns: trnsList) {
+			String type = trns.getType();
+			int account = trns.getAccountNum();
+			float balance = 0.0;
+			for (Account acc: accounts) 
+				if (acc.getAccountNumber() == account)
+					balance = acc.getBalance();
+			
+		}
+		
+			    balance = b.balance where b.account = account
+			    IF type = check
+			     b.balance = balance + a.ammount
+			    ELSE IF type =  Debit Card
+			     temp = balance - a.amount
+			     IF temp >= 0
+			      b.balance = temp
+			     ELSE
+			      b.balnce = temp - 35
+		return 0;
 	}
 
 	private static String checkType(int next) {
